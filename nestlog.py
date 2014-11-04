@@ -47,11 +47,11 @@ def getDataStructure (nc):
     return result
 
 def dumpReadings ():
-    nestlogin = os.environ.get('NESTLOGIN').split(':')
+    nestlogin = os.environ.get('NESTLOGIN')
     mongologin = os.environ.get('MONGOURI')
 
     if (nestlogin is not None) and (mongologin is not None):
-        nest = Nest(*nestlogin)
+        nest = Nest(*nestlogin.split(':'))
         client = MongoClient(mongologin)
     else:
         raise EnvironmentError
