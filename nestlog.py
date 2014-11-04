@@ -2,6 +2,8 @@
 
 import os
 import datetime
+import time
+import schedule
 from nest_thermostat import Nest
 from pymongo import MongoClient
 
@@ -44,8 +46,7 @@ def getDataStructure (nc):
 
     return result
 
-if __name__ == '__main__':
-
+def dumpReadings ():
     nestlogin = os.environ.get('NESTLOGIN').split(':')
     mongologin = os.environ.get('MONGOURI')
 
@@ -58,3 +59,19 @@ if __name__ == '__main__':
     record = getDataStructure(nest)
     col = client.nest.records
     col.insert(record)
+    
+    print(record['date'].isoformat())
+
+if __name__ == '__main__':
+
+    interval = os.environ.get('INTERVAL')
+    if interval is not None:
+        interval = int(interval)
+    else:
+        interval = 60
+    
+    schedule.every(interval).minutes.do(dumpReadings)
+    
+    while True:
+        schedule.run_pending()
+        time.sleep(30)
