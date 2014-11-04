@@ -53,4 +53,3 @@ plot_url = py.plot(data, filename='nest-logs', auto_open=False)
 
 # Output URL
 print(plot_url)
-
