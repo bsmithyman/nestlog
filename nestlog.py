@@ -6,6 +6,7 @@ import time
 import schedule
 from nest_thermostat import Nest
 from pymongo import MongoClient
+from requests.exceptions import ConnectionError
 
 def getDataStructure (nc):
     
@@ -56,11 +57,14 @@ def dumpReadings ():
     else:
         raise EnvironmentError
 
-    record = getDataStructure(nest)
-    col = client.nest.records
-    col.insert(record)
-    
-    print(record['date'].isoformat())
+    try:
+        record = getDataStructure(nest)
+        col = client.nest.records
+        col.insert(record)
+    except ConnectionError:
+        print('Couldn\'t access Nest service!')
+    finally:
+        print(record['date'].isoformat())
 
 if __name__ == '__main__':
 
